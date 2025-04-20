@@ -1,9 +1,9 @@
 import React from 'react'
-import Sidebar from './components/Siderbar/Sidebar'
 import { createBrowserRouter, Route, RouterProvider } from 'react-router-dom'
 import MainLayout from './Layouts/MainLayout'
 import Login from './pages/Login/Login'
 import Resgister from './pages/Register/Resgister'
+import Home from './pages/Home/Home'
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -15,6 +15,9 @@ export default function App() {
         },
         {
           path: '/register', element: <Resgister />
+        },
+        {
+          path: '/', element: <Home />
         }
       ]
     }

@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { IoIosAdd, IoMdClose } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 
-const circleColors = ["#A5D8FF", "#C3FBD8", "#FFD6A5", "#FFADAD"];
+const circleColors = ["#D5A21F", "#FB923C", "#A370D6", "#8BC32D", "#2CB382"];
 
 const circleVariants = {
     hidden: { scale: 0, opacity: 0, y: 0 },
     visible: (i) => ({
         scale: 1,
         opacity: 1,
-        y: (i + 1) * 50, // فرق متساوي بين الدواير
+        y: (i + 1) * -50, // فرق متساوي بين الدواير
         transition: {
             delay: i * 0.25, // كل واحدة تتولد من اللي قبلها
             type: "spring",
@@ -47,7 +47,7 @@ function AddButton() {
                                 className="absolute w-7 h-7 rounded-full ml-2.5"
                                 style={{
                                     backgroundColor: color,
-                                    top: "40%", // بداية من قريب الزرار
+                                    top: "0%", // بداية من قريب الزرار
                                     left: 0,
                                 }}
                             />
