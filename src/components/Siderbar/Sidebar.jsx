@@ -37,7 +37,6 @@ export default function Sidebar() {
             >
                 <div className='flex flex-col justify-between h-screen py-10 px-4 sticky top-0'>
 
-                    {/* الأعلى */}
                     <div>
                         <h1 className='text-4xl font-bold text-gray-800 mb-8 text-center'>Docket</h1>
 
