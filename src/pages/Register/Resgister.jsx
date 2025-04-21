@@ -162,7 +162,7 @@ export default function Register() {
                                 ease: "easeInOut",
                             },
                         }}
-                        whileTap={{ scale: 1 }}
+                        whileTap={{ scale: 0.9 }}
                         transition={{ type: "spring", stiffness: 100 }}
                     >
                         Docket

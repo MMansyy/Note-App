@@ -82,7 +82,7 @@ export default function Login() {
                         validationSchema={validationSchema}
                         onSubmit={(values, { resetForm }) => {
                             console.log(values);
-                            
+
                             setIsSubmitting(true);
                             handleSubmit(values).then(() => {
                                 resetForm();
@@ -177,6 +177,7 @@ export default function Login() {
                             rotate: [-2, 2, -1, 1, 0],
                             transition: { duration: 0.6, ease: "easeInOut" },
                         }}
+                        whileTap={{ scale: 0.9 }}
                     >
                         Docket
                     </motion.h1>

@@ -26,6 +26,9 @@ const NoteButton = ({ data, refreshnotes }) => {
                 console.log(err.response.data.msg)
                 toast.error(err.response.data.msg, { position: "top-center", duration: 3000 })
             })
+            .finally(() => {
+                setOpen(false)
+            })
     }
 
     return (

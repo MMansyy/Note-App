@@ -6,6 +6,7 @@ import Resgister from './pages/Register/Resgister'
 import Home from './pages/Home/Home'
 import { TokenProvider } from './context/TokenContext'
 import { Toaster } from 'react-hot-toast'
+import ProtectedRoutes from './Auth/ProtectedRoutes/ProtectedRoutes'
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -19,7 +20,10 @@ export default function App() {
           path: '/register', element: <Resgister />
         },
         {
-          path: '/', element: <Home />
+          path: '/', element:
+            <ProtectedRoutes>
+              <Home />
+            </ProtectedRoutes>
         }
       ]
     }
