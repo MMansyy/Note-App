@@ -1,14 +1,38 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { TokenContext } from "../../context/TokenContext";
+import toast from "react-hot-toast";
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { setToken } = useContext(TokenContext)
+    const navigate = useNavigate()
 
     const togglePassword = () => setShowPassword((prev) => !prev);
+
+    async function handleSubmit(values) {
+        await axios.post('https://note-sigma-black.vercel.app/api/v1/users/signIn', values)
+            .then((res) => {
+                setToken(res.data.token)
+                localStorage.setItem('token', res.data.token)
+                console.log(res.data.token)
+                toast.success("Logged in successfully!", { position: "top-center", duration: 3000 })
+                setIsSubmitting(false)
+                navigate('/')
+            })
+            .catch((err) => {
+                console.log(err.response.data.msg)
+                toast.error(err.response.data.msg, { position: "top-center", duration: 3000 })
+                setIsSubmitting(false)
+            }
+            )
+
+    }
 
     const container = {
         hidden: {},
@@ -30,7 +54,7 @@ export default function Login() {
 
     const validationSchema = Yup.object({
         email: Yup.string().email("Invalid email").required("Email is required"),
-        password: Yup.string().min(6, "At least 6 characters").required("Password is required"),
+        password: Yup.string().min(4, "At least 4 characters").required("Password is required"),
     });
 
     return (
@@ -57,13 +81,12 @@ export default function Login() {
                         }}
                         validationSchema={validationSchema}
                         onSubmit={(values, { resetForm }) => {
+                            console.log(values);
+                            
                             setIsSubmitting(true);
-                            setTimeout(() => {
-                                alert("Logged in successfully!");
-                                console.log(values);
+                            handleSubmit(values).then(() => {
                                 resetForm();
-                                setIsSubmitting(false);
-                            }, 2000);
+                            });
                         }}
                     >
                         {() => (
@@ -119,8 +142,8 @@ export default function Login() {
                                         type="submit"
                                         disabled={isSubmitting}
                                         className={`w-full font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all duration-300 ${isSubmitting
-                                                ? "bg-gray-400 cursor-not-allowed text-white"
-                                                : "bg-black hover:bg-gray-800 text-white"
+                                            ? "bg-gray-400 cursor-not-allowed text-white"
+                                            : "bg-black hover:bg-gray-800 text-white"
                                             }`}
                                     >
                                         {isSubmitting ? "Logging in..." : "Login"}

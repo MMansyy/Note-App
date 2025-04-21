@@ -4,6 +4,8 @@ import MainLayout from './Layouts/MainLayout'
 import Login from './pages/Login/Login'
 import Resgister from './pages/Register/Resgister'
 import Home from './pages/Home/Home'
+import { TokenProvider } from './context/TokenContext'
+import { Toaster } from 'react-hot-toast'
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -23,6 +25,9 @@ export default function App() {
     }
   ])
   return (
-    <RouterProvider router={routes} />
+    <TokenProvider>
+      <Toaster reverseOrder={false} />
+      <RouterProvider router={routes} />
+    </TokenProvider>
   )
 }

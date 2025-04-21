@@ -2,25 +2,21 @@ import { AnimatePresence, motion } from "framer-motion";
 import * as Yup from 'yup';
 import { FaTimes } from "react-icons/fa";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import toast from "react-hot-toast";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { useState } from "react";
 
-export default function Modal({ modalIsOpen, setModalIsOpen, data, refreshnotes }) {
+export default function AddNoteModal({ modalIsOpen, setModalIsOpen, refreshnotes }) {
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-    const validationSchema = Yup.object({
-        title: Yup.string().required("Title is required"),
-        content: Yup.string().required("Content is required"),
-    });
+    const token = '3b8ny__' + localStorage.getItem('token')
 
     async function handleSubmit(values) {
-        console.log(values);
         setIsSubmitting(true)
-        await axios.put(`https://note-sigma-black.vercel.app/api/v1/notes/${data._id}`, values, { headers: { token: '3b8ny__' + localStorage.getItem('token') } })
+        axios.post('https://note-sigma-black.vercel.app/api/v1/notes', values, { headers: { token } })
             .then((res) => {
-                toast.success("Note updated successfully!", { position: "top-center", duration: 3000 })
+                toast.success("Note added successfully!", { position: "top-center", duration: 3000 })
                 console.log(res.data)
                 refreshnotes()
             }).catch((err) => {
@@ -30,8 +26,15 @@ export default function Modal({ modalIsOpen, setModalIsOpen, data, refreshnotes 
             .finally(() => {
                 setModalIsOpen(false)
                 setIsSubmitting(false)
+
             })
     }
+
+
+    const validationSchema = Yup.object({
+        title: Yup.string().required("Title is required"),
+        content: Yup.string().required("Content is required"),
+    });
 
     return (
         <AnimatePresence>
@@ -60,14 +63,13 @@ export default function Modal({ modalIsOpen, setModalIsOpen, data, refreshnotes 
                             <FaTimes className="h-4 w-4 text-gray-600" />
                         </motion.button>
 
-                        <h2 className="text-2xl font-bold mb-6 text-center">📝 Update Your Note</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-center">Add New Note</h2>
 
                         <Formik
-                            initialValues={{ title: data.title, content: data.content }}
+                            initialValues={{ title: "", content: "" }}
                             validationSchema={validationSchema}
                             onSubmit={(values, { resetForm }) => {
                                 handleSubmit(values).then(() => {
-                                    resetForm();
                                 });
                             }}
                         >
@@ -102,7 +104,7 @@ export default function Modal({ modalIsOpen, setModalIsOpen, data, refreshnotes 
                                         disabled={isSubmitting}
                                         className={`bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                                     >
-                                        {isSubmitting ? "Updating..." : "Update Note"}
+                                        {isSubmitting ? "Adding..." : "Add Note"}
                                     </button>
                                 </div>
                             </Form>

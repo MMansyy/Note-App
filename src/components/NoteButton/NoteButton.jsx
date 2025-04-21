@@ -9,10 +9,24 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import Modal from "../Modal/Modal";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-const NoteButton = () => {
+const NoteButton = ({ data, refreshnotes }) => {
     const [open, setOpen] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false)
+
+    async function deleteNote() {
+        await axios.delete(`https://note-sigma-black.vercel.app/api/v1/notes/${data._id}`, { headers: { token: '3b8ny__' + localStorage.getItem('token') } })
+            .then((res) => {
+                toast.success("Note deleted successfully!", { position: "top-center", duration: 3000 })
+                console.log(res.data)
+                refreshnotes()
+            }).catch((err) => {
+                console.log(err.response.data.msg)
+                toast.error(err.response.data.msg, { position: "top-center", duration: 3000 })
+            })
+    }
 
     return (
         <div className=" flex items-center justify-center">
@@ -26,7 +40,7 @@ const NoteButton = () => {
                 >
                     <motion.span className="text-white"><BsThreeDots className='text-3xl' /></motion.span>
                 </motion.button>
-                < Modal modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen} />
+                < Modal refreshnotes={refreshnotes} modalIsOpen={modalIsOpen} data={data} setModalIsOpen={setModalIsOpen} />
                 <motion.ul
                     initial={wrapperVariants.closed}
                     variants={wrapperVariants}
@@ -34,20 +48,23 @@ const NoteButton = () => {
                     className="flex flex-col gap-2 p-2 rounded-lg bg-black shadow-xl absolute top-[-180%] left-[50%] w-28 overflow-hidden"
                 >
                     <Option setOpen={setOpen} setModalIsOpen={setModalIsOpen} Icon={FiEdit} text="Edit" />
-                    <Option setOpen={setOpen} Icon={FiTrash} text="Remove" />
+                    <Option setOpen={setOpen} deleteNote={deleteNote} Icon={FiTrash} text="Remove" />
                 </motion.ul>
             </motion.div>
         </div>
     );
 };
 
-const Option = ({ text, Icon, setOpen, setModalIsOpen }) => {
+const Option = ({ text, Icon, setOpen, setModalIsOpen, deleteNote }) => {
     return (
         <motion.li
             variants={itemVariants}
             onClick={() => {
                 if (text === "Edit") {
                     setModalIsOpen(true);
+                }
+                if (text === "Remove") {
+                    deleteNote()
                 }
                 setOpen(false)
             }}

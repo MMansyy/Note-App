@@ -1,5 +1,9 @@
 import { motion } from "framer-motion";
 import Note from '../../components/Note/Note';
+import AddButton from "../../components/AddButton/AddButton";
+import AddNoteModal from "../../components/Modal/AddModal";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -17,7 +21,29 @@ const noteVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
 };
 
+
+
 export default function Home() {
+
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [notes, setnotes] = useState([])
+
+    async function getNotes() {
+        await axios.get('https://note-sigma-black.vercel.app/api/v1/notes', { headers: { token: '3b8ny__' + localStorage.getItem('token') } })
+            .then((res) => {
+                console.log(res.data.notes)
+                setnotes(res.data.notes)
+            })
+            .catch((err) => {
+                console.log(err.response.data.msg)
+            })
+    }
+
+    useEffect(() => {
+        getNotes()
+    }, [])
+
+
     return (
         <motion.div
             className='flex flex-col p-6 ml-10'
@@ -44,18 +70,25 @@ export default function Home() {
                 <h1 className='text-6xl text-left font-semibold me-auto'>Notes</h1>
 
                 <motion.div
+                    key={notes.length}
                     className='flex flex-col md:flex-row flex-wrap gap-7 mt-10 items-center'
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
                 >
-                    {[...Array(6)].map((_, i) => (
-                        <motion.div key={i} variants={noteVariants}>
-                            <Note />
+                    {notes.map((note, index) => (
+                        <motion.div key={note.id} variants={noteVariants}>
+                            <Note refreshnotes={getNotes} data={note} index={index} />
                         </motion.div>
                     ))}
                 </motion.div>
             </div>
+            <div className='fixed bottom-10 right-10'>
+                <AddButton setModalIsOpen={setModalIsOpen} />
+            </div>
+            <AddNoteModal refreshnotes={getNotes} modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen} />
+
+
         </motion.div>
     );
 }
